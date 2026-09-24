@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="简洁、私密的云端记账本" />
+  <title>账本 · 云端记账</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%231d8f78'/%3E%3Cpath d='M18 20h28v24H18z' fill='none' stroke='white' stroke-width='5'/%3E%3Cpath d='M25 29h14M25 37h9' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+</head>
+<body>
+  <main class="shell">
+    <section id="auth-view" class="auth-card">
+      <div class="brand-mark">账</div>
+      <p class="eyebrow">你的私密账本</p>
+      <h1>每一笔，都有它的位置。</h1>
+      <p class="muted intro">登录后，记录会安全保存在云端，换手机也不会丢。</p>
+      <form id="auth-form">
+        <label>邮箱<input id="email" type="email" placeholder="you@example.com" required /></label>
+        <label>密码<input id="password" type="password" placeholder="至少 6 位" minlength="6" required /></label>
+        <button class="primary full" type="submit" id="auth-submit">登录 / 注册</button>
+      </form>
+      <p id="auth-message" class="message"></p>
+      <p class="tiny">首次输入邮箱和密码即可注册；已有账号会直接登录。</p>
+    </section>
+
+    <section id="app-view" hidden>
+      <header class="topbar">
+        <div><p class="eyebrow">PERSONAL LEDGER</p><h1>你好，今天也记一笔。</h1></div>
+        <button id="sign-out" class="text-button">退出登录</button>
+      </header>
+      <section class="summary-grid">
+        <article class="summary income"><span>本月收入</span><strong id="income-total">¥0.00</strong></article>
+        <article class="summary expense"><span>本月支出</span><strong id="expense-total">¥0.00</strong></article>
+        <article class="summary balance"><span>本月结余</span><strong id="balance-total">¥0.00</strong></article>
+      </section>
+      <section class="workspace">
+        <div class="panel form-panel">
+          <div class="panel-heading"><div><p class="eyebrow">NEW ENTRY</p><h2>记一笔</h2></div><span class="plus">＋</span></div>
+          <form id="entry-form">
+            <div class="segmented"><button type="button" class="active" data-type="expense">支出</button><button type="button" data-type="income">收入</button></div>
+            <label>金额<input id="amount" type="number" min="0.01" step="0.01" placeholder="0.00" required /></label>
+            <label>分类<select id="category"><option>餐饮</option><option>交通</option><option>购物</option><option>居住</option><option>娱乐</option><option>医疗</option><option>工资</option><option>其他</option></select></label>
+            <label>日期<input id="date" type="date" required /></label>
+            <label>备注 <span class="optional">可选</span><input id="note" type="text" maxlength="80" placeholder="例如：午饭、地铁" /></label>
+            <button class="primary full" type="submit">保存记录</button>
+          </form>
+          <p id="entry-message" class="message"></p>
+        </div>
+        <div class="panel list-panel">
+          <div class="panel-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>最近账单</h2></div><span id="entry-count" class="count">0 笔</span></div>
+          <div id="entries" class="entries"><div class="empty">还没有记录，先记下今天的第一笔吧。</div></div>
+        </div>
+      </section>
+      <footer>数据只属于当前账号 · 由数据库权限保护</footer>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');</script>
+</body>
+</html>
