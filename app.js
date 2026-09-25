@@ -6,7 +6,7 @@ let currentUser = null, entryType = 'expense', entries = [];
 const money = n => `¥${Number(n).toFixed(2)}`;
 const today = new Date().toISOString().slice(0,10); $('date').value = today;
 function showAuth(message=''){ $('auth-view').hidden=false; $('app-view').hidden=true; $('auth-message').textContent=message; }
-function showApp(){ $('auth-view').hidden=true; $('app-view').hidden=false; loadEntries(); }
+function showApp(){ window.location.replace(new URL('preview.html', window.location.href).href); }
 if(!configured) showAuth('请先在 config.js 填入 Supabase 配置，再发布网站。');
 if(supabase) supabase.auth.getSession().then(({data})=> data.session ? (currentUser=data.session.user,showApp()) : showAuth());
 $('auth-form').addEventListener('submit', async e=>{e.preventDefault(); if(!supabase)return; $('auth-message').textContent='正在处理…'; const email=$('email').value.trim(), password=$('password').value; let result=await supabase.auth.signInWithPassword({email,password}); if(result.error){result=await supabase.auth.signUp({email,password}); if(!result.error && !result.data.session) $('auth-message').textContent='注册成功，请检查邮箱后再登录。';} if(result.error) $('auth-message').textContent=result.error.message; else if(result.data.session){currentUser=result.data.user;showApp();}});
