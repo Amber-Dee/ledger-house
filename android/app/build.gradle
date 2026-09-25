@@ -1,0 +1,14 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'com.amberdee.ledgerhouse'
+ compileSdk 35
+ defaultConfig { applicationId 'com.amberdee.ledgerhouse'; minSdk 26; targetSdk 35; versionCode 1; versionName '1.0' }
+ sourceSets.main.assets.srcDir(layout.buildDirectory.dir('houseAssets'))
+}
+dependencies { implementation 'androidx.webkit:webkit:1.12.1' }
+tasks.register('copyHouseAssets', Sync) {
+ from('../..') { include '*.png', 'preview.html', 'preview.css', 'preview.js', 'ledger-store.js' }
+ into(layout.buildDirectory.dir('houseAssets'))
+}
+tasks.named('preBuild').configure { dependsOn 'copyHouseAssets' }
+

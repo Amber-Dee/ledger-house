@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
 const dialog=$('dialog'), speech=$('speech'), choices=$('choices'), entry=$('entry');
-const bills=[]; let draft={};
+const bills=window.houseLedger.read(); let draft={};
 const outingKey='bundle-outing-state';
 let outingUntil=Number(localStorage.getItem(outingKey)||0),bundleUsedDate=localStorage.getItem('bundle-used-date')||'';
 const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
@@ -446,7 +446,7 @@ function amount(){
  choices.hidden=true;entry.hidden=false;
  const form=document.createElement('form');
  form.innerHTML='<label for="amount">我告诉怀英：金额（元）</label><input id="amount" type="number" min="0.01" max="99999999" step="0.01" inputmode="decimal" required placeholder="例如 18.50"><label for="note">需要备注吗？<span class="optional">可选</span></label><input id="note" type="text" maxlength="100" placeholder="例如：和朋友吃午饭"><button class="save" type="submit">就是这些，谢谢狄大人</button>';
- form.onsubmit=e=>{e.preventDefault();const n=Number($('amount').value);if(!Number.isFinite(n)||n<=0)return;const note=$('note').value.trim();bills.push({...draft,amount:n,note,date:new Date().toISOString().slice(0,10)});const remark=pickRemark(draft);say(`这笔 ${n.toFixed(2)} 元，我记在「${draft.category}」里了。${remark}`,[['看看账本',ledger],['还想继续记录',menu],['谢谢，辛苦你啦',close]])};
+ form.onsubmit=e=>{e.preventDefault();const n=Number($('amount').value);if(!Number.isFinite(n)||n<=0||n>99999999)return;const note=$('note').value.trim();const bill={...draft,id:crypto.randomUUID(),amount:Math.round(n*100)/100,note,date:todayKey()};try{window.houseLedger.save([...bills,bill])}catch(error){alert('保存失败，请重试。'+error.message);return}bills.push(bill);const remark=pickRemark(draft);say(`这笔 ${bill.amount.toFixed(2)} 元，我记在「${draft.category}」里了。${remark}`,[['看看账本',ledger],['还想继续记录',menu],['谢谢，辛苦你啦',close]])};
  entry.append(form);$('amount').focus();
 }
 let ledgerMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
